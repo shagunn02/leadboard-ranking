@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axiosInstance from "./axiosConfig"; 
+
+
 import "./styles/Leaderboard.css";
 
 function App() {
@@ -10,16 +12,17 @@ function App() {
   const [historyLogs, setHistoryLogs] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
 
-  const fetchLeaderboard = () => {
-    axios
-      .get("http://localhost:8000/api/leaderboard")
-      .then((res) => setLeaderboardUsers(res.data))
-      .catch((err) => console.error("Leaderboard fetch error:", err.message));
-  };
+ const fetchLeaderboard = () => {
+  axiosInstance
+    .get("/leaderboard")
+    .then((res) => setLeaderboardUsers(res.data))
+    .catch((err) => console.error("Leaderboard fetch error:", err.message));
+};
+
 
   const fetchHistory = () => {
     axios
-      .get("http://localhost:8000/api/history")
+      .get("/history")
       .then((res) => setHistoryLogs(res.data))
       .catch((err) => console.error("History fetch error:", err.message));
   };
@@ -32,7 +35,7 @@ function App() {
   const handleClaim = () => {
     if (!selectedUserId) return;
     axios
-      .post(`http://localhost:8000/api/claim/${selectedUserId}`)
+      .post(/claim/${selectedUserId})
       .then((res) => {
         setClaimedPoints({
           name: res.data.user.name,
@@ -47,7 +50,7 @@ function App() {
   const handleAddUser = () => {
     if (!newUserName.trim()) return;
     axios
-      .post("http://localhost:8000/api/users", { name: newUserName })
+      .post("/users", { name: newUserName })
       .then(() => {
         setNewUserName("");
         fetchLeaderboard();
